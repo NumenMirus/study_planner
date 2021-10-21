@@ -64,10 +64,7 @@ public class Argoment {
     }
 
     public void setPriority(int p){
-        if(p > 3 && p < 1)
-            System.out.println("Wrong priority value: choose between 1, 2, 3");
-        else
-            this.priority = p;
+        this.priority = p;
     }
 
     public void  setFrequency(int f){
