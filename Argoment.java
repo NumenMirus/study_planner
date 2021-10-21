@@ -33,6 +33,15 @@ public class Argoment {
         this.frequency = Integer.parseInt(f);
     }
 
+    Argoment(Argoment a){
+        this.Argoment = a.Argoment;
+        this.finalDate = a.finalDate;
+        this.frequency = a.frequency;
+        this.insertionDate = a.insertionDate;
+        this.priority = a.priority;
+        this.id = a.id;
+    }
+
     public String toString(){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy");
         return "ID:" + this.id + "|| Arg:" + this.Argoment + "|| Inserimento:" + insertionDate.format(formatter) + "|| Finale:" 
@@ -63,5 +72,17 @@ public class Argoment {
 
     public void  setFrequency(int f){
         this.frequency = f;
+    }
+
+    public void  setArgoment(String a){
+        this.Argoment = a;
+    }
+
+    public void  setFinalDate(LocalDate date){
+        this.finalDate = date;
+    }
+
+    public void  setInsertionDate  (LocalDate date){
+        this.insertionDate = date;
     }
 }
