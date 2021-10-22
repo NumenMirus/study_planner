@@ -26,7 +26,7 @@ public class Main{
 
         while(choice != 0){
             clearScreen();
-            System.out.println("Bentornato, seleziona l'opzione:\n\n1) Visualizza ripassi di oggi\n2) Aggiungi nuovo argomento\n3) Elimina argomento\n4) Modifica impostazioni argomento\n5) Stampa calendario\n6) Attiva notifiche Desktop\n\n0) ESCI\n\n");
+            System.out.println("Bentornato, seleziona l'opzione:\n\n1) Stampa ripassi di oggi\n2) Aggiungi nuovo argomento\n3) Elimina argomento\n4) Modifica impostazioni argomento\n5) Stampa calendario\n6) Attiva notifiche Desktop (Beta)\n\n0) ESCI\n\n");
             choice = scanner.nextInt();
             scanner.nextLine();            
 
@@ -49,21 +49,55 @@ public class Main{
                     break;
                 case 2:
                     clearScreen();
-                    storeArgoments(addArgoment(scanner), dataFilepath);
+                    storeArgoment(addArgoment(scanner), dataFilepath);
                     break;
                 case 3:
                     clearScreen();
                     //elimina argomento
+                    {
+                        System.out.println("Seleziona una modalità:\n\n1) Per ID\n2) Per nome\n\n0) BACK");
+                        int c = scanner.nextInt();
+                        scanner.nextLine();
+                        if(c == 1){
+                            System.out.println("Inserisci ID:");
+                            int h = scanner.nextInt();
+                            scanner.nextLine();
+                            deleteArgument(h, dataFilepath);
+                        }else if(c == 2){
+                            System.out.println("Inserisci nome:");
+                            String n = scanner.nextLine();
+                            deleteArgument(n, dataFilepath);
+                        }
+                    }
                     break;
                 case 4:
                     clearScreen();
                     //modifica impostazioni argomento
+                    {
+                        System.out.println("Ricerca Argomento:\n\n1) Per ID\n2) Per nome\n\n0) BACK");
+                        int c = scanner.nextInt();
+                        scanner.nextLine();
+                        if(c == 1){
+                            System.out.println("Inserisci ID:");
+                            int h = scanner.nextInt();
+                            scanner.nextLine();
+                            modifyArgoment(h, dataFilepath, scanner);
+                        }else if(c == 2){
+                            System.out.println("Inserisci nome:");
+                            String n = scanner.nextLine();
+                            modifyArgoment(n, dataFilepath, scanner);
+                        }
+                    }
                     break;
                 case 5:
                     clearScreen();
                     //crea calendario
                     createCalendar(calendarFilepath, dataFilepath);
-                    //generates pdf
+                    //generates .txt file di tutti gli argomenti per una settimana
+                    LocalDate now = LocalDate.now();
+                    for(int i = 0; i < 7; i++){
+                        printCalendarArgoments(now.plusDays(i), calendarFilepath, dataFilepath);
+                    }
                     break;
                 case 6:
                     clearScreen();
@@ -82,7 +116,7 @@ public class Main{
         System.out.flush();  
     }  
 
-    public static void storeArgoments(Argoment arg, String filepath){
+    public static void storeArgoment(Argoment arg, String filepath){
         try{
             FileWriter writer = new FileWriter(filepath, true);
             BufferedWriter buffwriter = new BufferedWriter(writer);
@@ -252,7 +286,10 @@ public class Main{
         return false;
     }
 
-    public static int findId(int id, ArrayList<Argoment> a){
+    public static int findIdPos(int id, ArrayList<Argoment> a){
+        if(a.isEmpty())
+            return -1;
+        
         int i = 0;
         for(Argoment x : a){
             if(x.id == id)
@@ -260,6 +297,19 @@ public class Main{
             i++;
         }
         return i;
+    }
+
+    public static int findArgPos(String s, ArrayList<Argoment> a){
+        if(a.isEmpty())
+            return -1;
+
+        int i = 0;
+        for(Argoment x : a){
+            if(x.Argoment.toLowerCase().compareTo(s.toLowerCase()) == 0)
+                return i;
+            i++;
+        }
+        return -1;
     }
 
     public static ArrayList<String> idToArgumentName (ArrayList<Integer> ids, String dataFilepath){
@@ -270,11 +320,208 @@ public class Main{
 
         for(Integer id : ids){
             if(isArgPresent((int)id, args)){
-                int i = findId((int)id, args);
+                int i = findIdPos((int)id, args);
                 a.add(args.get(i).Argoment);
             }
         }
 
         return a;
+    }
+
+    public static String idToArgumentName (int id, String dataFilepath){
+        String a = "";
+        ArrayList<Argoment> args = new ArrayList<Argoment>();
+
+        readArgoments(dataFilepath, args);
+
+        if(isArgPresent((int)id, args)){
+            int i = findIdPos((int)id, args);
+            a = args.get(i).Argoment;
+        }
+
+        return a;
+    }
+
+    public static void deleteArgument(int id, String datafilepath){
+        ArrayList<Argoment> args = new ArrayList<Argoment>();
+
+        readArgoments(datafilepath, args);
+
+        // deletes previous calendar file if exixtsing
+        File calendar = new File(datafilepath); 
+        calendar.delete();
+
+        if(args.isEmpty())  
+            System.out.println("Nessun elemento da cancellare");
+        else{
+            int i = findIdPos(id, args);
+            args.remove(i);
+
+            for(Argoment x : args){
+                storeArgoment(x, datafilepath);
+            }
+        }
+    }
+
+    public static void deleteArgument(String s, String datafilepath){
+        ArrayList<Argoment> args = new ArrayList<Argoment>();
+
+        readArgoments(datafilepath, args);
+
+        // deletes previous calendar file if exixtsing
+        File calendar = new File(datafilepath); 
+        calendar.delete();
+
+        if(args.isEmpty())  
+            System.out.println("Nessun elemento da cancellare");
+        else{
+            int i = findArgPos(s, args);
+            args.remove(i);
+
+            for(Argoment x : args){
+                storeArgoment(x, datafilepath);
+            }
+        }
+
+    }
+
+    public static void modifyArgoment(int id, String datafilepath, Scanner scanner){
+        ArrayList<Argoment> args = new ArrayList<Argoment>();
+
+        readArgoments(datafilepath, args);
+
+        if(args.isEmpty())
+            return;
+        else{
+            int i = findIdPos(id, args);
+            if(i == -1)
+                return;
+            else{
+                System.out.println("Modifiche disponibili:\n\n1) Nome\n2) Data di fine\n3) Priorità\n4) Frequenza\n\n0) BACK");
+                int c = scanner.nextInt();
+                scanner.nextLine();
+
+                if(c == 1){
+                    System.out.println("Digita Nome");
+                    String nome = scanner.nextLine();
+                    args.get(i).setArgoment(nome);
+                }else if(c ==2){
+                    System.out.println("Inserisci nuova data finale (dd/MM/yyyy)");
+                    String finalDate = scanner.nextLine();
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                    LocalDate fd = LocalDate.parse(finalDate, formatter);
+                    args.get(i).setFinalDate(fd);
+                }else if(c == 3){
+                    System.out.println("Inserisci nuova priorità:");
+                    int p = scanner.nextInt();
+                    scanner.nextLine();
+                    args.get(i).setPriority(p);
+                }else if(c == 4){
+                    System.out.println("Inserisci nuova frequenza (in giorni):");
+                    int f = scanner.nextInt();
+                    scanner.nextLine();
+                    args.get(i).setFrequency(f);
+                }else{
+                    return;
+                }
+            }
+            // deletes previous calendar file if exixtsing
+            File calendar = new File(datafilepath); 
+            calendar.delete();
+
+            for(Argoment x : args){
+                storeArgoment(x, datafilepath);
+            }
+        }
+    }
+
+    public static void modifyArgoment(String n, String datafilepath, Scanner scanner){
+        ArrayList<Argoment> args = new ArrayList<Argoment>();
+
+        readArgoments(datafilepath, args);
+
+        if(args.isEmpty())
+            return;
+        else{
+            int i = findArgPos(n, args);
+            if(i == -1)
+                return;
+            else{
+                System.out.println("Modifiche disponibili:\n\n1) Nome\n2) Data di fine\n3) Priorità\n4) Frequenza\n\n0) BACK");
+                int c = scanner.nextInt();
+                scanner.nextLine();
+
+                if(c == 1){
+                    System.out.println("Digita Nome");
+                    String nome = scanner.nextLine();
+                    args.get(i).setArgoment(nome);
+                }else if(c ==2){
+                    System.out.println("Inserisci nuova data finale (dd/MM/yyyy)");
+                    String finalDate = scanner.nextLine();
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                    LocalDate fd = LocalDate.parse(finalDate, formatter);
+                    args.get(i).setFinalDate(fd);
+                }else if(c == 3){
+                    System.out.println("Inserisci nuova priorità:");
+                    int p = scanner.nextInt();
+                    scanner.nextLine();
+                    args.get(i).setPriority(p);
+                }else if(c == 4){
+                    System.out.println("Inserisci nuova frequenza (in giorni):");
+                    int f = scanner.nextInt();
+                    scanner.nextLine();
+                    args.get(i).setFrequency(f);
+                }else{
+                    return;
+                }
+            }
+            // deletes previous calendar file if exixtsing
+            File calendar = new File(datafilepath); 
+            calendar.delete();
+
+            for(Argoment x : args){
+                storeArgoment(x, datafilepath);
+            }
+        }
+    }
+
+    public static void printCalendarArgoments(LocalDate date, String calendarfilepath, String datafilepath){
+        // set up datetime formatter
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        try{
+                // inizialize the readers
+                FileReader reader = new FileReader(calendarfilepath);
+                BufferedReader buffreader = new BufferedReader(reader);
+                String line;
+                
+                // reads each line of the calendar
+                while((line = buffreader.readLine()) != null){
+                    String[] row = line.split(",");
+                    
+                    // gets all Argoments of today's date
+                    if(LocalDate.parse(row[1], formatter).compareTo(date) == 0){
+                        FileWriter writer = new FileWriter("calendar.txt", true);
+                        BufferedWriter buffwriter = new BufferedWriter(writer);
+                        PrintWriter pwriter = new PrintWriter(buffwriter);
+                        DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("dd MMMM yyyy");
+
+                        pwriter.println(LocalDate.parse(row[1], formatter).format(formatter2) + " - " + idToArgumentName(Integer.parseInt(row[0]), datafilepath));
+                        
+                        //closing the writers
+                        pwriter.close();
+                        writer.close();
+                    
+                    }
+                }
+
+                // closing the readers
+                reader.close();
+                buffreader.close();
+
+            }catch(Exception E){
+                JOptionPane.showMessageDialog(null, "Record not red");
+                E.printStackTrace();
+            }
     }
 }
