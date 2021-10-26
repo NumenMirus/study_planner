@@ -26,7 +26,7 @@ public class Main{
 
         while(choice != 0){
             clearScreen();
-            System.out.println("Bentornato, seleziona l'opzione:\n\n1) Stampa ripassi di oggi\n2) Aggiungi nuovo argomento\n3) Elimina argomento\n4) Modifica impostazioni argomento\n5) Stampa calendario\n6) Attiva notifiche Desktop (Beta)\n\n0) ESCI\n\n");
+            System.out.println("Bentornato, seleziona l'opzione:\n\n1) Stampa ripassi di oggi\n2) Aggiungi nuovo argomento\n3) Elimina argomento\n4) Modifica impostazioni argomento\n5) Stampa calendario settimanale\n6) Attiva notifiche Desktop (Beta)\n\n0) ESCI\n\n");
             choice = scanner.nextInt();
             scanner.nextLine();            
 
@@ -42,10 +42,8 @@ public class Main{
                     // converts ids in Argoment name to display
                     ArrayList<String> argNames = idToArgumentName(ids, dataFilepath);
 
-                    //visualizza ripassi di oggi
-                    for(String s : argNames){
-                        System.out.println(s);
-                    }
+                    //stampa ripassi di oggi
+                    printToFile(argNames, "Oggi hai da fare:");
                     break;
                 case 2:
                     clearScreen();
@@ -95,7 +93,14 @@ public class Main{
                     createCalendar(calendarFilepath, dataFilepath);
                     //generates .txt file di tutti gli argomenti per una settimana
                     LocalDate now = LocalDate.now();
-                    for(int i = 0; i < 7; i++){
+
+                    //elimina il file calendario.txt precedente 
+                    deleteFile("calendar.txt");
+
+                    int dd = 7;
+
+                    //stampa nel nuovo calendario
+                    for(int i = 0; i < dd; i++){
                         printCalendarArgoments(now.plusDays(i), calendarFilepath, dataFilepath);
                     }
                     break;
@@ -115,6 +120,14 @@ public class Main{
         System.out.print("\033[H\033[2J");  
         System.out.flush();  
     }  
+
+    public static void deleteFile(String path){
+
+        // deletes previous calendar file if exixtsing
+        File calendar = new File(path); 
+        calendar.delete();
+
+    }
 
     public static void storeArgoment(Argoment arg, String filepath){
         try{
@@ -269,9 +282,7 @@ public class Main{
         ArrayList<Argoment> aList = new ArrayList<Argoment>();
         readArgoments(dataFilepath, aList);
 
-        // deletes previous calendar file if exixtsing
-        File calendar = new File("calendar.csv"); 
-        calendar.delete();
+        deleteFile(calendarFilepath);
 
         for(Argoment a : aList){
             writeInCalendar(a, calendarFilepath);
@@ -523,5 +534,49 @@ public class Main{
                 JOptionPane.showMessageDialog(null, "Record not red");
                 E.printStackTrace();
             }
+    }
+
+    public static void printToFile(ArrayList<String> args){
+
+        try{
+            FileWriter writer = new FileWriter("calendar.txt", false);
+            BufferedWriter buffwriter = new BufferedWriter(writer);
+            PrintWriter pwriter = new PrintWriter(buffwriter);
+            
+            for(String a : args){
+                pwriter.print(a + "\n");
+            }
+                
+            //closing the writers
+            pwriter.close();
+            writer.close();
+
+        }catch(Exception E){
+            JOptionPane.showMessageDialog(null, "Record not red");
+            E.printStackTrace();
+        }
+
+    }
+
+    public static void printToFile(ArrayList<String> args, String opt){
+
+        try{
+            FileWriter writer = new FileWriter("calendar.txt", false);
+            BufferedWriter buffwriter = new BufferedWriter(writer);
+            PrintWriter pwriter = new PrintWriter(buffwriter);
+            pwriter.println(opt + "\n");
+            for(String a : args){
+                pwriter.print(a + "\n");
+            }
+                
+            //closing the writers
+            pwriter.close();
+            writer.close();
+
+        }catch(Exception E){
+            JOptionPane.showMessageDialog(null, "Record not red");
+            E.printStackTrace();
+        }
+
     }
 }
