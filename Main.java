@@ -33,7 +33,7 @@ public class Main{
             switch(choice){
                 case 1:
                     clearScreen();
-                    // create calendario
+                    // create calendar
                     createCalendar(calendarFilepath, dataFilepath);
 
                     // find today's date ids from calendar and converts them in Argoment names to display
