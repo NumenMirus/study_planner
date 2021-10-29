@@ -25,14 +25,12 @@ public class Main{
 
 
         while(choice != 0){
-            clearScreen();
             System.out.println("Bentornato, seleziona l'opzione:\n\n1) Stampa ripassi di oggi\n2) Aggiungi nuovo argomento\n3) Elimina argomento\n4) Modifica impostazioni argomento\n5) Stampa calendario settimanale\n6) Attiva notifiche Desktop (Beta)\n\n0) ESCI\n\n");
             choice = scanner.nextInt();
-            scanner.nextLine();            
+            scanner.nextLine();
 
             switch(choice){
                 case 1:
-                    clearScreen();
                     // create calendar
                     createCalendar(calendarFilepath, dataFilepath);
 
@@ -46,11 +44,9 @@ public class Main{
                     printToFile(argNames, "Oggi hai da fare:");
                     break;
                 case 2:
-                    clearScreen();
                     storeArgoment(addArgoment(scanner), dataFilepath);
                     break;
                 case 3:
-                    clearScreen();
                     //elimina argomento
                     {
                         System.out.println("Seleziona una modalità:\n\n1) Per ID\n2) Per nome\n\n0) BACK");
@@ -69,7 +65,6 @@ public class Main{
                     }
                     break;
                 case 4:
-                    clearScreen();
                     //modifica impostazioni argomento
                     {
                         System.out.println("Ricerca Argomento:\n\n1) Per ID\n2) Per nome\n\n0) BACK");
@@ -88,7 +83,6 @@ public class Main{
                     }
                     break;
                 case 5:
-                    clearScreen();
                     //crea calendario
                     createCalendar(calendarFilepath, dataFilepath);
                     //generates .txt file di tutti gli argomenti per una settimana
@@ -105,7 +99,6 @@ public class Main{
                     }
                     break;
                 case 6:
-                    clearScreen();
                     //attiva notifiche
                     break;  
                 default:
@@ -116,10 +109,10 @@ public class Main{
         scanner.close();
     }
 
-    public static void clearScreen() {  
-        System.out.print("\033[H\033[2J");  
-        System.out.flush();  
-    }  
+    // public static void clearScreen() {  
+    //     System.out.print("\033[H\033[2J");  
+    //     System.out.flush();  
+    // }  
 
     public static void deleteFile(String path){
 
@@ -358,15 +351,15 @@ public class Main{
 
         readArgoments(datafilepath, args);
 
-        // deletes previous calendar file if exixtsing
-        File calendar = new File(datafilepath); 
-        calendar.delete();
-
         if(args.isEmpty())  
             System.out.println("Nessun elemento da cancellare");
         else{
             int i = findIdPos(id, args);
             args.remove(i);
+
+            // deletes previous calendar file if exixtsing
+            File data = new File(datafilepath); 
+            data.delete();
 
             for(Argoment x : args){
                 storeArgoment(x, datafilepath);
@@ -379,15 +372,15 @@ public class Main{
 
         readArgoments(datafilepath, args);
 
-        // deletes previous calendar file if exixtsing
-        File calendar = new File(datafilepath); 
-        calendar.delete();
-
         if(args.isEmpty())  
             System.out.println("Nessun elemento da cancellare");
         else{
             int i = findArgPos(s, args);
             args.remove(i);
+
+            // deletes previous calendar file if exixtsing
+            File data = new File(datafilepath); 
+            data.delete();
 
             for(Argoment x : args){
                 storeArgoment(x, datafilepath);
@@ -562,6 +555,28 @@ public class Main{
 
         try{
             FileWriter writer = new FileWriter("calendar.txt", false);
+            BufferedWriter buffwriter = new BufferedWriter(writer);
+            PrintWriter pwriter = new PrintWriter(buffwriter);
+            pwriter.println(opt + "\n");
+            for(String a : args){
+                pwriter.print(a + "\n");
+            }
+                
+            //closing the writers
+            pwriter.close();
+            writer.close();
+
+        }catch(Exception E){
+            JOptionPane.showMessageDialog(null, "Record not red");
+            E.printStackTrace();
+        }
+
+    }
+
+    public static void printToFile(String path, ArrayList<String> args, String opt){
+
+        try{
+            FileWriter writer = new FileWriter(path, false);
             BufferedWriter buffwriter = new BufferedWriter(writer);
             PrintWriter pwriter = new PrintWriter(buffwriter);
             pwriter.println(opt + "\n");
