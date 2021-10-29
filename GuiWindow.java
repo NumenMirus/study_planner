@@ -67,7 +67,7 @@ public class GuiWindow extends JFrame implements Action{
         
         //IMAGES AND ICONS
 
-        ImageIcon icon = new ImageIcon("studying.png");
+        ImageIcon icon = new ImageIcon("./icons/studying.png");
         this.setIconImage(icon.getImage());
 
 
@@ -234,22 +234,24 @@ public class GuiWindow extends JFrame implements Action{
         
         /// LOGIC ///
         if(e.getSource() == button1){
-            clearScreen();
-            // create calendar
-            Main.createCalendar(calendarFilepath, dataFilepath);
-
-            // find today's date ids from calendar and converts them in Argoment names to display
-            ArrayList<Integer> ids = Main.getCalendarArgomentsIds(LocalDate.now(), calendarFilepath);
-
-            // converts ids in Argoment name to display
-            ArrayList<String> argNames = Main.idToArgumentName(ids, dataFilepath);
 
             //stampa ripassi di oggi
             if(text1.getText() == "")
                 JOptionPane.showConfirmDialog(null, "Path mancante!", "Errore", JOptionPane.ERROR_MESSAGE);
-            else   
+            else{   
+                // create calendar
+                Main.createCalendar(calendarFilepath, dataFilepath);
+
+                // find today's date ids from calendar and converts them in Argoment names to display
+                ArrayList<Integer> ids = Main.getCalendarArgomentsIds(LocalDate.now(), calendarFilepath);
+
+                // converts ids in Argoment name to display
+                ArrayList<String> argNames = Main.idToArgumentName(ids, dataFilepath);
+
                 Main.printToFile(text1.getText()+"calendar.txt", argNames, "Oggi hai da fare:"); 
 
+                text1.setText("");
+            }
         }
 
         ///// RADIO BUTTON NUMBER 2 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
