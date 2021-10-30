@@ -1,8 +1,8 @@
 import javax.swing.JButton;
 
 public class Button extends JButton{
-    
-    Button(){
+
+	Button(){
         this.setText("Lorem Ipsum");
         this.setBounds(0, 0, 50, 50);
         this.setFocusable(false);
