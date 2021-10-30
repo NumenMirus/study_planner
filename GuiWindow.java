@@ -17,14 +17,15 @@ import java.time.format.DateTimeFormatter;
 
 public class GuiWindow extends JFrame implements Action{
 
-    final String dataFilepath = "./data.csv";
-    final String calendarFilepath = "./calendar.csv";
+    final String dataFilepath = "data.csv";
+    final String calendarFilepath = "calendar.csv";
 
 
     //GLOBAL DECLARATIONS FOR BUTTONS
     Button button1;
     Button button2;
     Button button3;
+    Button button4;
 
     RadioButton radio1;
     RadioButton radio2;
@@ -34,9 +35,9 @@ public class GuiWindow extends JFrame implements Action{
     RadioButton radioFreq1;
     RadioButton radioFreq2;
     RadioButton radioFreq3;
-    RadioButton radioFreq4;
-    RadioButton radioFreq5;
-    RadioButton radioFreq6;
+
+    //GLOBAL DECLARATIONS FOR BOTTONGROUPS
+    ButtonGroup radioGroupFreq1;
 
 
     //GLOBAL DECLARATIONS FOR TEXTFIELDS
@@ -109,6 +110,10 @@ public class GuiWindow extends JFrame implements Action{
         button3.addActionListener(this);
         this.add(button3);
 
+        button4 = new Button("Modifica", 50, 700, 400, 50, false);
+        button4.addActionListener(this);
+        this.add(button4);
+
 
         radio1 = new RadioButton("Stampa ripassi di oggi", 20, 50, 450, 20);
         radio1.addActionListener(this);
@@ -126,7 +131,7 @@ public class GuiWindow extends JFrame implements Action{
         radio4.addActionListener(this);
         this.add(radio4);
 
-        radio5 = new RadioButton("Stampa calendario 7 giorni", 20, 170, 400, 20);
+        radio5 = new RadioButton("Stampa calendario", 20, 170, 400, 20);
         radio5.addActionListener(this);
         this.add(radio5);
 
@@ -150,7 +155,7 @@ public class GuiWindow extends JFrame implements Action{
         radioGroup.add(radio4);
         radioGroup.add(radio5);
 
-        ButtonGroup radioGroupFreq1 = new ButtonGroup();
+        radioGroupFreq1 = new ButtonGroup();
         radioGroupFreq1.add(radioFreq1);
         radioGroupFreq1.add(radioFreq2);
         radioGroupFreq1.add(radioFreq3);
@@ -223,6 +228,7 @@ public class GuiWindow extends JFrame implements Action{
             text5.setVisible(false);
             combo1.setVisible(false);
             label7.setVisible(false);
+            button4.setVisible(false);
             button3.setVisible(false);
             
 
@@ -265,6 +271,7 @@ public class GuiWindow extends JFrame implements Action{
             combo1.setVisible(false);
             label7.setVisible(false);
             button3.setVisible(false);
+            button4.setVisible(false);
 
             //setting elements visible
             text2.setVisible(true);
@@ -284,18 +291,20 @@ public class GuiWindow extends JFrame implements Action{
             if(text1.getText() == "" || text2.getText() == "" || text3.getText() == ""){
                 JOptionPane.showMessageDialog(null, "Dati mancanti", "Errore", JOptionPane.ERROR_MESSAGE);
             }else{
-                int p = 10;
+                int p = -1;
                 if(radioFreq1.isSelected())
                     p = 1;
                 else if(radioFreq2.isSelected())
                     p = 2;
                 else if(radioFreq3.isSelected())
                     p = 3;
-                Main.storeArgoment(addArgoment(text2.getText(),  text4.getText(), Integer.parseInt(text3.getText()), p), dataFilepath);
+                Main.storeArgoment(addArgoment(text2.getText(),  text4.getText(), p, Integer.parseInt(text3.getText())), dataFilepath);
 
                 text2.setText("");
                 text3.setText("");
                 text4.setText("");
+
+                radioGroupFreq1.clearSelection();
             }
         }
         
@@ -317,6 +326,7 @@ public class GuiWindow extends JFrame implements Action{
             radioFreq3.setVisible(false);
             label4.setVisible(false);
             text5.setVisible(false);
+            button4.setVisible(false);
 
             //setting elements visible
             text2.setVisible(true);
@@ -328,18 +338,15 @@ public class GuiWindow extends JFrame implements Action{
         /// LOGIC ///
         if(e.getSource() == button3){
             String s = text2.getText();
-            System.out.println(s);
             if(s != ""){
 
                 if(combo1.getSelectedIndex() == 0){
 
                     Main.deleteArgument(s, dataFilepath);
-                    System.out.println("fatto 1");
 
                 }else if(combo1.getSelectedIndex() == 1){
 
                     Main.deleteArgument(Integer.parseInt(s), dataFilepath);
-                    System.out.println("fatto 2");
                 }
 
                 text2.setText("");
@@ -354,14 +361,8 @@ public class GuiWindow extends JFrame implements Action{
             label2.setVisible(false);
             button1.setVisible(false);
             label3.setVisible(false);
-            text2.setVisible(false);
-            label4.setVisible(false);
-            label5.setVisible(false);
-            text3.setVisible(false);
-            label6.setVisible(false);
-            text4.setVisible(false);
-            button2.setVisible(false);
             button3.setVisible(false);
+            button2.setVisible(false);
 
             //setting elements visible
             text5.setVisible(true);
@@ -371,9 +372,85 @@ public class GuiWindow extends JFrame implements Action{
             radioFreq2.setVisible(true);
             radioFreq3.setVisible(true);
             label4.setVisible(true);
+            label5.setVisible(true);
+            text3.setVisible(true);
+            label6.setVisible(true);
+            text4.setVisible(true);
+            button4.setVisible(true);
+        }
 
+        ///// LOGIC /////
+        if(e.getSource() == button4){
+            if(combo1.getSelectedIndex() == 0){
+                //set priority
+                int p = -1;
+                if(radioFreq1.isSelected())
+                    p = 1;
+                else if(radioFreq2.isSelected())
+                    p = 2;
+                else if(radioFreq3.isSelected())
+                    p = 3;
 
+                //set date
+                String date = "";
+                if(text4.getText().trim().isEmpty())
+                    date = "null";
+                else
+                    date = text4.getText();
 
+                //set frequency
+                String f = "";
+                int freq;
+                if(text3.getText().trim().isEmpty())
+                    freq = -1;
+                else{    
+                    f = text3.getText();
+                    freq = Integer.parseInt(f);
+                }
+
+                Main.modifyArgument(dataFilepath, text2.getText(), date, p, freq);
+
+                radioGroupFreq1.clearSelection();
+                
+                text3.setText("");
+                text4.setText("");
+                
+                
+            }else if(combo1.getSelectedIndex() == 1){
+                int p = -1;
+                if(radioFreq1.isSelected())
+                    p = 1;
+                else if(radioFreq2.isSelected())
+                    p = 2;
+                else if(radioFreq3.isSelected())
+                    p = 3;
+                
+                //set date
+                String date = "";
+                if(text4.getText().trim().isEmpty())
+                    date = "null";
+                else
+                    date = text4.getText();
+
+                //set frequency
+                String f = "";
+                int freq;
+                if(text3.getText().trim().isEmpty())
+                    freq = -1;
+                else{    
+                    f = text3.getText();
+                    freq = Integer.parseInt(f);
+                }
+                Main.modifyArgument(dataFilepath, Integer.parseInt(text2.getText()), date, p, freq);
+
+                radioGroupFreq1.clearSelection();
+                
+                text3.setText("");
+                text4.setText("");
+                
+            }
+
+            
         }
 
         ///// RADIO BUTTON NUMBER 5 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -397,10 +474,8 @@ public class GuiWindow extends JFrame implements Action{
             text5.setVisible(false);
             combo1.setVisible(false);
             label7.setVisible(false);
-            radioFreq4.setVisible(false);
-            radioFreq5.setVisible(false);
-            radioFreq6.setVisible(false);
             button3.setVisible(false);
+            button4.setVisible(false);
 
 
 

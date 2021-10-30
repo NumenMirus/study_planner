@@ -15,15 +15,9 @@ import javax.swing.JOptionPane;
 public class Main{
 
     public static void main(String[] args){
-
-        final String dataFilepath = "data.csv";
-        final String calendarFilepath = "calendar.csv";
-
-        Scanner scanner = new Scanner(System.in);
-        int choice = 1;
         
-
-
+        new GuiWindow();
+/*
         while(choice != 0){
             System.out.println("Bentornato, seleziona l'opzione:\n\n1) Stampa ripassi di oggi\n2) Aggiungi nuovo argomento\n3) Elimina argomento\n4) Modifica impostazioni argomento\n5) Stampa calendario settimanale\n6) Attiva notifiche Desktop (Beta)\n\n0) ESCI\n\n");
             choice = scanner.nextInt();
@@ -106,7 +100,8 @@ public class Main{
             }
         }
         
-        scanner.close();
+        scanner.close();     
+*/
     }
 
     // public static void clearScreen() {  
@@ -389,104 +384,75 @@ public class Main{
 
     }
 
-    public static void modifyArgoment(int id, String datafilepath, Scanner scanner){
+    public static int modifyArgument(String datafilepath, String name, String finaldate, int p, int f){
         ArrayList<Argoment> args = new ArrayList<Argoment>();
-
         readArgoments(datafilepath, args);
 
-        if(args.isEmpty())
-            return;
-        else{
-            int i = findIdPos(id, args);
-            if(i == -1)
-                return;
-            else{
-                System.out.println("Modifiche disponibili:\n\n1) Nome\n2) Data di fine\n3) Priorità\n4) Frequenza\n\n0) BACK");
-                int c = scanner.nextInt();
-                scanner.nextLine();
-
-                if(c == 1){
-                    System.out.println("Digita Nome");
-                    String nome = scanner.nextLine();
-                    args.get(i).setArgoment(nome);
-                }else if(c ==2){
-                    System.out.println("Inserisci nuova data finale (dd/MM/yyyy)");
-                    String finalDate = scanner.nextLine();
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                    LocalDate fd = LocalDate.parse(finalDate, formatter);
-                    args.get(i).setFinalDate(fd);
-                }else if(c == 3){
-                    System.out.println("Inserisci nuova priorità:");
-                    int p = scanner.nextInt();
-                    scanner.nextLine();
-                    args.get(i).setPriority(p);
-                }else if(c == 4){
-                    System.out.println("Inserisci nuova frequenza (in giorni):");
-                    int f = scanner.nextInt();
-                    scanner.nextLine();
-                    args.get(i).setFrequency(f);
-                }else{
-                    return;
-                }
-            }
-            // deletes previous calendar file if exixtsing
-            File calendar = new File(datafilepath); 
-            calendar.delete();
-
-            for(Argoment x : args){
-                storeArgoment(x, datafilepath);
+        int i = findArgPos(name, args);
+        if(i == -1)
+            return 1;
+        
+        if(finaldate != "null"){
+            try{
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            LocalDate fd = LocalDate.parse(finaldate, formatter);
+            args.get(i).setFinalDate(fd);
+            }catch(Exception E){
+                return -1;
             }
         }
+        if(p != -1)
+            args.get(i).setPriority(p);
+        if(f != -1)
+            args.get(i).setFrequency(f);
+
+        //delete previous datafile if existing
+        deleteFile(datafilepath);
+
+        //dtoring new data in new datafile
+        for(Argoment a : args){
+            storeArgoment(a, datafilepath);
+        }
+
+        return 0;
     }
 
-    public static void modifyArgoment(String n, String datafilepath, Scanner scanner){
+    public static int modifyArgument(String datafilepath, int id, String finaldate, int p, int f){
         ArrayList<Argoment> args = new ArrayList<Argoment>();
-
         readArgoments(datafilepath, args);
 
-        if(args.isEmpty())
-            return;
-        else{
-            int i = findArgPos(n, args);
-            if(i == -1)
-                return;
-            else{
-                System.out.println("Modifiche disponibili:\n\n1) Nome\n2) Data di fine\n3) Priorità\n4) Frequenza\n\n0) BACK");
-                int c = scanner.nextInt();
-                scanner.nextLine();
-
-                if(c == 1){
-                    System.out.println("Digita Nome");
-                    String nome = scanner.nextLine();
-                    args.get(i).setArgoment(nome);
-                }else if(c ==2){
-                    System.out.println("Inserisci nuova data finale (dd/MM/yyyy)");
-                    String finalDate = scanner.nextLine();
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                    LocalDate fd = LocalDate.parse(finalDate, formatter);
-                    args.get(i).setFinalDate(fd);
-                }else if(c == 3){
-                    System.out.println("Inserisci nuova priorità:");
-                    int p = scanner.nextInt();
-                    scanner.nextLine();
-                    args.get(i).setPriority(p);
-                }else if(c == 4){
-                    System.out.println("Inserisci nuova frequenza (in giorni):");
-                    int f = scanner.nextInt();
-                    scanner.nextLine();
-                    args.get(i).setFrequency(f);
-                }else{
-                    return;
-                }
-            }
-            // deletes previous calendar file if exixtsing
-            File calendar = new File(datafilepath); 
-            calendar.delete();
-
-            for(Argoment x : args){
-                storeArgoment(x, datafilepath);
+        int i = findIdPos(id, args);
+        if(i == -1)
+            return 1;
+        
+        if(finaldate != "null"){
+            try{
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            LocalDate fd = LocalDate.parse(finaldate, formatter);
+            args.get(i).setFinalDate(fd);
+            System.out.println("set 1");
+            }catch(Exception E){
+                return -1;
             }
         }
+        if(p != -1){
+            args.get(i).setPriority(p);
+            System.out.println("set 2");
+        }
+        if(f != -1){    
+            args.get(i).setFrequency(f);
+            System.out.println("set 3");
+        }
+        //delete previous datafile if existing
+        deleteFile(datafilepath);
+
+        //dtoring new data in new datafile
+        for(Argoment a : args){
+            storeArgoment(a, datafilepath);
+            a.toString();
+        }
+
+        return 0;
     }
 
     public static void printCalendarArgoments(LocalDate date, String calendarfilepath, String datafilepath){
