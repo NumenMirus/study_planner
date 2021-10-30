@@ -8,6 +8,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
@@ -26,6 +27,7 @@ public class GuiWindow extends JFrame implements Action{
     Button button2;
     Button button3;
     Button button4;
+    Button button5;
 
     RadioButton radio1;
     RadioButton radio2;
@@ -46,6 +48,7 @@ public class GuiWindow extends JFrame implements Action{
     JTextField text3;
     JTextField text4;
     JTextField text5;
+    JTextField text6;
 
     //GLOBAL DECLARATIONS FOR LABELS
     Label label2;
@@ -54,6 +57,10 @@ public class GuiWindow extends JFrame implements Action{
     Label label5;
     Label label6;
     Label label7;
+    Label label8;
+    Label label9;
+    Label labelDone;
+    Label labelError;
 
     //GLOBAL DECLARATIONS FOR COMBOBOX
     JComboBox<String> combo1;
@@ -64,12 +71,15 @@ public class GuiWindow extends JFrame implements Action{
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setResizable(false);
         this.setLayout(null);
+        this.setLocationRelativeTo(null);
         
         
         //IMAGES AND ICONS
 
         ImageIcon icon = new ImageIcon("./icons/studying.png");
         this.setIconImage(icon.getImage());
+
+        ImageIcon done = new ImageIcon("./icons/done.png");
 
 
         //LABELS
@@ -95,6 +105,21 @@ public class GuiWindow extends JFrame implements Action{
         label7 = new Label("Cerca argomento per: ", 50, 260, 280, 30);
         this.add(label7);
 
+        label8 = new Label("Stampa calendario dei prossimi ", 50, 380, 400, 30);
+        this.add(label8);
+
+        label9 = new Label("giorni", 150, 470, 200, 30);
+        this.add(label9);
+
+        labelDone = new Label(" DONE!", 200, 665, 100, 31);
+        labelDone.setFont(new Font("Arial", Font.PLAIN, 18));
+        labelDone.setIcon(done);
+        labelDone.setVerticalTextPosition(JLabel.CENTER);
+        labelDone.setHorizontalTextPosition(JLabel.RIGHT);
+        this.add(labelDone);
+
+        labelError = new Label("error", 150, 405, 200, 30);
+        this.add(labelError);
 
         //BUTTONS AND RADIOBUTTONS
 
@@ -114,24 +139,28 @@ public class GuiWindow extends JFrame implements Action{
         button4.addActionListener(this);
         this.add(button4);
 
+        button5 = new Button("Componi", 50, 550, 400, 50, false);
+        button5.addActionListener(this);
+        this.add(button5);
 
-        radio1 = new RadioButton("Stampa ripassi di oggi", 20, 50, 450, 20);
+
+        radio1 = new RadioButton("Stampa ripassi di oggi", 20, 60, 450, 20);
         radio1.addActionListener(this);
         this.add(radio1);
 
-        radio2 = new RadioButton("Aggiungi argomento", 20, 80, 450, 20);
+        radio2 = new RadioButton("Aggiungi argomento", 20, 90, 450, 20);
         radio2.addActionListener(this);
         this.add(radio2);
 
-        radio3 = new RadioButton("Elimina Argomento", 20, 110, 450, 20);
+        radio3 = new RadioButton("Elimina Argomento", 20, 120, 450, 20);
         radio3.addActionListener(this);
         this.add(radio3);
 
-        radio4 = new RadioButton("Modifica impostazioni di un argomento", 20, 140, 450, 20);
+        radio4 = new RadioButton("Modifica impostazioni di un argomento", 20, 150, 450, 20);
         radio4.addActionListener(this);
         this.add(radio4);
 
-        radio5 = new RadioButton("Stampa calendario", 20, 170, 400, 20);
+        radio5 = new RadioButton("Stampa calendario", 20, 180, 400, 20);
         radio5.addActionListener(this);
         this.add(radio5);
 
@@ -192,6 +221,12 @@ public class GuiWindow extends JFrame implements Action{
         text5.setVisible(false);
         this.add(text5);
 
+        text6 = new JTextField();
+        text6.setBounds(225, 420, 50, 30);
+        text6.setHorizontalAlignment(JTextField.CENTER);
+        text6.setVisible(false);
+        this.add(text6);
+
         //COMBOBOX
 
         String[] choice = {" Nome", " ID"};
@@ -230,6 +265,12 @@ public class GuiWindow extends JFrame implements Action{
             label7.setVisible(false);
             button4.setVisible(false);
             button3.setVisible(false);
+            label8.setVisible(false);
+            label9.setVisible(false);
+            text6.setVisible(false);
+            button5.setVisible(false);
+            labelDone.setVisible(false);
+
             
 
             //setting elements visible
@@ -240,10 +281,11 @@ public class GuiWindow extends JFrame implements Action{
         
         /// LOGIC ///
         if(e.getSource() == button1){
+            labelDone.setVisible(false);
 
             //stampa ripassi di oggi
-            if(text1.getText() == "")
-                JOptionPane.showConfirmDialog(null, "Path mancante!", "Errore", JOptionPane.ERROR_MESSAGE);
+            if(text1.getText().trim().isEmpty())
+                JOptionPane.showMessageDialog(null, "Path mancante!", "Error", JOptionPane.ERROR_MESSAGE);
             else{   
                 // create calendar
                 Main.createCalendar(calendarFilepath, dataFilepath);
@@ -257,6 +299,7 @@ public class GuiWindow extends JFrame implements Action{
                 Main.printToFile(text1.getText()+"calendar.txt", argNames, "Oggi hai da fare:"); 
 
                 text1.setText("");
+                labelDone.setVisible(true);
             }
         }
 
@@ -272,6 +315,12 @@ public class GuiWindow extends JFrame implements Action{
             label7.setVisible(false);
             button3.setVisible(false);
             button4.setVisible(false);
+            label8.setVisible(false);
+            label9.setVisible(false);
+            text6.setVisible(false);
+            button5.setVisible(false);
+            labelDone.setVisible(false);
+
 
             //setting elements visible
             text2.setVisible(true);
@@ -288,7 +337,8 @@ public class GuiWindow extends JFrame implements Action{
         }
             /// LOGIC ///
         if(e.getSource() == button2){
-            if(text1.getText() == "" || text2.getText() == "" || text3.getText() == ""){
+            labelDone.setVisible(false);
+            if(text2.getText().trim().isEmpty() || text3.getText().trim().isEmpty() || text4.getText().trim().isEmpty()){
                 JOptionPane.showMessageDialog(null, "Dati mancanti", "Errore", JOptionPane.ERROR_MESSAGE);
             }else{
                 int p = -1;
@@ -305,6 +355,7 @@ public class GuiWindow extends JFrame implements Action{
                 text4.setText("");
 
                 radioGroupFreq1.clearSelection();
+                labelDone.setVisible(true);
             }
         }
         
@@ -327,6 +378,12 @@ public class GuiWindow extends JFrame implements Action{
             label4.setVisible(false);
             text5.setVisible(false);
             button4.setVisible(false);
+            label8.setVisible(false);
+            label9.setVisible(false);
+            text6.setVisible(false);
+            button5.setVisible(false);
+            labelDone.setVisible(false);
+
 
             //setting elements visible
             text2.setVisible(true);
@@ -337,11 +394,13 @@ public class GuiWindow extends JFrame implements Action{
 
         /// LOGIC ///
         if(e.getSource() == button3){
-            String s = text2.getText();
-            if(s != ""){
+            labelDone.setVisible(false);
+            
+            if(!text2.getText().trim().isEmpty()){
 
+                String s = text2.getText();
                 if(combo1.getSelectedIndex() == 0){
-
+                    
                     Main.deleteArgument(s, dataFilepath);
 
                 }else if(combo1.getSelectedIndex() == 1){
@@ -350,6 +409,7 @@ public class GuiWindow extends JFrame implements Action{
                 }
 
                 text2.setText("");
+                labelDone.setVisible(true);
             }
         }
         
@@ -363,6 +423,12 @@ public class GuiWindow extends JFrame implements Action{
             label3.setVisible(false);
             button3.setVisible(false);
             button2.setVisible(false);
+            label8.setVisible(false);
+            label9.setVisible(false);
+            text6.setVisible(false);
+            button5.setVisible(false);
+            labelDone.setVisible(false);
+
 
             //setting elements visible
             text5.setVisible(true);
@@ -381,7 +447,9 @@ public class GuiWindow extends JFrame implements Action{
 
         ///// LOGIC /////
         if(e.getSource() == button4){
+            labelDone.setVisible(false);
             if(combo1.getSelectedIndex() == 0){
+                labelDone.setVisible(false);
                 //set priority
                 int p = -1;
                 if(radioFreq1.isSelected())
@@ -414,9 +482,11 @@ public class GuiWindow extends JFrame implements Action{
                 
                 text3.setText("");
                 text4.setText("");
+                labelDone.setVisible(true);
                 
                 
             }else if(combo1.getSelectedIndex() == 1){
+                labelDone.setVisible(false);
                 int p = -1;
                 if(radioFreq1.isSelected())
                     p = 1;
@@ -447,6 +517,7 @@ public class GuiWindow extends JFrame implements Action{
                 
                 text3.setText("");
                 text4.setText("");
+                labelDone.setVisible(true);
                 
             }
 
@@ -457,8 +528,6 @@ public class GuiWindow extends JFrame implements Action{
         if(e.getSource()==radio5){
 
             //setting other elements not visible
-            text1.setVisible(false);
-            label2.setVisible(false);
             button1.setVisible(false);
             label3.setVisible(false);
             text2.setVisible(false);
@@ -476,9 +545,45 @@ public class GuiWindow extends JFrame implements Action{
             label7.setVisible(false);
             button3.setVisible(false);
             button4.setVisible(false);
+            labelDone.setVisible(false);
 
+            //setting elements visible
+            text1.setVisible(true);
+            label2.setVisible(true);
+            label8.setVisible(true);
+            label9.setVisible(true);
+            text6.setVisible(true);
+            button5.setVisible(true);
+        }
 
+        //// LOGIC /////
+        if(e.getSource() == button5){
+            labelDone.setVisible(false);
 
+            if(text1.getText().trim().isEmpty())
+                JOptionPane.showMessageDialog(null, "Path mancante!", "Errore", JOptionPane.ERROR_MESSAGE);
+            else if(text6.getText().trim().isEmpty())
+                JOptionPane.showMessageDialog(null, "Lasso temporale mancante!", "Errore", JOptionPane.ERROR_MESSAGE);
+            else{
+                String path = text1.getText();
+                
+                //crea calendario
+                Main.createCalendar(calendarFilepath, dataFilepath);
+                //generates .txt file di tutti gli argomenti per una settimana
+                LocalDate now = LocalDate.now();
+
+                //elimina il file calendario.txt precedente 
+                Main.deleteFile("calendar.txt");
+
+                int dd = Integer.parseInt(text6.getText());
+
+                //stampa nel nuovo calendario
+                for(int i = 0; i < dd; i++){
+                    Main.printCalendarArgoments(now.plusDays(i), path, dataFilepath);
+                }
+
+                labelDone.setVisible(true);
+            }
         }
     }
 
@@ -491,11 +596,6 @@ public class GuiWindow extends JFrame implements Action{
     public void putValue(String arg0, Object arg1) {
         
     }
-
-    public static void main(String[] args) {
-        new GuiWindow();
-    }
-
 
     public static void clearScreen() {  
         System.out.print("\033[H\033[2J");  
