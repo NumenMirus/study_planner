@@ -9,6 +9,9 @@ public class Button extends JButton{
         this.setVerticalAlignment(JButton.CENTER);
         this.setHorizontalAlignment(JButton.CENTER);
         this.setVisible(false);
+        this.setBorderPainted(true);
+        this.setFocusPainted(false);
+        this.setContentAreaFilled(false);
     }
 
     Button(String s, int x, int y, int width, int height){
@@ -18,6 +21,9 @@ public class Button extends JButton{
         this.setVerticalAlignment(JButton.CENTER);
         this.setHorizontalAlignment(JButton.CENTER);
         this.setVisible(false);
+        this.setBorderPainted(true);
+        this.setFocusPainted(false);
+        this.setContentAreaFilled(false);
     }
 
     Button(String s, int x, int y, int width, int height, boolean visible){
@@ -27,5 +33,8 @@ public class Button extends JButton{
         this.setVerticalAlignment(JButton.CENTER);
         this.setHorizontalAlignment(JButton.CENTER);
         this.setVisible(visible);
+        this.setBorderPainted(true);
+        this.setFocusPainted(false);
+        this.setContentAreaFilled(false);
     }
 }
