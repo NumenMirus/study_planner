@@ -371,7 +371,7 @@ public class Main{
         return 0;
     }
 
-    public static void printCalendarArgoments(LocalDate date, String calendarfilepath, String datafilepath){
+    public static void printCalendarArgoments(LocalDate date, String calendarfilepath, String datafilepath, String savePath){
         // set up datetime formatter
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
@@ -387,7 +387,7 @@ public class Main{
                     
                     // gets all Argoments of today's date
                     if(LocalDate.parse(row[1], formatter).compareTo(date) == 0){
-                        FileWriter writer = new FileWriter("calendar.txt", true);
+                        FileWriter writer = new FileWriter(savePath.concat("calendar.txt"), true);
                         BufferedWriter buffwriter = new BufferedWriter(writer);
                         PrintWriter pwriter = new PrintWriter(buffwriter);
                         DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("dd MMMM yyyy");

@@ -565,11 +565,11 @@ public class GuiWindow extends JFrame implements Action{
             else if(text6.getText().trim().isEmpty())
                 JOptionPane.showMessageDialog(null, "Lasso temporale mancante!", "Errore", JOptionPane.ERROR_MESSAGE);
             else{
-                String path = text1.getText();
+                String savePath = text1.getText();
                 
                 //crea calendario
                 Main.createCalendar(calendarFilepath, dataFilepath);
-                //generates .txt file di tutti gli argomenti per una settimana
+                //genera .txt file di tutti gli argomenti per una settimana
                 LocalDate now = LocalDate.now();
 
                 //elimina il file calendario.txt precedente 
@@ -579,7 +579,7 @@ public class GuiWindow extends JFrame implements Action{
 
                 //stampa nel nuovo calendario
                 for(int i = 0; i < dd; i++){
-                    Main.printCalendarArgoments(now.plusDays(i), path, dataFilepath);
+                    Main.printCalendarArgoments(now.plusDays(i), calendarFilepath, dataFilepath, savePath);
                 }
 
                 labelDone.setVisible(true);
