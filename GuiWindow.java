@@ -349,7 +349,7 @@ public class GuiWindow extends JFrame implements Action{
                 else if(radioFreq3.isSelected())
                     p = 3;
                 Main.storeArgoment(addArgoment(text2.getText(),  text4.getText(), p, Integer.parseInt(text3.getText())), dataFilepath);
-
+                Main.createCalendar(calendarFilepath, dataFilepath);
                 text2.setText("");
                 text3.setText("");
                 text4.setText("");
