@@ -3,9 +3,11 @@ import java.awt.event.ActionEvent;
 //import java.awt.GridLayout;
 import java.util.ArrayList;
 
+import javax.lang.model.util.ElementScanner14;
 import javax.swing.Action;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -13,6 +15,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
 import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
@@ -59,11 +62,15 @@ public class GuiWindow extends JFrame implements Action{
     Label label7;
     Label label8;
     Label label9;
+    Label label10;
     Label labelDone;
     Label labelError;
 
     //GLOBAL DECLARATIONS FOR COMBOBOX
     JComboBox<String> combo1;
+
+    //GLOBAL DECLARATIONS FOR CHECKBOXES
+    JCheckBox checkbox1;
 
     GuiWindow(){
         this.setTitle("Study Planner");
@@ -80,6 +87,8 @@ public class GuiWindow extends JFrame implements Action{
         this.setIconImage(icon.getImage());
 
         ImageIcon done = new ImageIcon("./icons/done.png");
+
+        ImageIcon error = new ImageIcon("./icons/x.png");
 
 
         //LABELS
@@ -108,7 +117,7 @@ public class GuiWindow extends JFrame implements Action{
         label8 = new Label("Stampa calendario dei prossimi ", 50, 380, 400, 30);
         this.add(label8);
 
-        label9 = new Label("giorni", 150, 470, 200, 30);
+        label9 = new Label("Attiva notifiche", 150, 470, 200, 30);
         this.add(label9);
 
         labelDone = new Label(" DONE!", 200, 665, 100, 31);
@@ -237,7 +246,17 @@ public class GuiWindow extends JFrame implements Action{
         combo1.setVisible(false);
         this.add(combo1);
 
+        //CHECKBOX
 
+        checkbox1 = new JCheckBox(error, false);
+        checkbox1.setDisabledIcon(done);
+        checkbox1.setText("Notifiche");
+        checkbox1.setBounds(175, 220, 150, 25);
+        checkbox1.setFont(new Font("Arial", Font.ITALIC, 18));
+        checkbox1.addActionListener(this);
+        checkbox1.setFocusable(false);
+        checkbox1.setVisible(true);
+        this.add(checkbox1);
 
 
         this.setVisible(true);
@@ -583,6 +602,25 @@ public class GuiWindow extends JFrame implements Action{
                 }
 
                 labelDone.setVisible(true);
+            }
+        }
+
+        if(e.getSource() == checkbox1){
+            String command;
+            String requirements = "pip install -r requirements";
+            if(System.getProperty("os.name").compareTo("Windows") == 0)
+                command = "pythonw notify.py";
+            else
+                command = "python3 notify.py &";
+
+            // String requirements = "pip install -r requirements.txt > log.txt";
+            try {
+                Process proc = Runtime.getRuntime().exec(command);
+                checkbox1.setEnabled(false);
+                
+            } catch (IOException e1) {
+                JOptionPane.showMessageDialog(null, "Errore attivazione notifiche", "Errore", JOptionPane.ERROR_MESSAGE);
+                e1.printStackTrace();
             }
         }
     }

@@ -35,7 +35,7 @@ class argument:
 
 def notify(text):
     notification.notify(
-    title="Ripassi odierni:\n\n",
+    title="Ripassi odierni:",
     message=text,
     app_icon="/icons/studying.ico",
     timeout=20

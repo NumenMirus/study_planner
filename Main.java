@@ -476,4 +476,11 @@ public class Main{
         }
 
     }
+
+    // public static void enableNotifications(){
+    //     String os = System.getProperty("os.name");
+
+    //     if(os.compareTo("Linux") == 0)       
+            
+    // }
 }
